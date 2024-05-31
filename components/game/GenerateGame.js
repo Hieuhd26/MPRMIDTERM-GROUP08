@@ -1,6 +1,13 @@
 // import tại đây
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, Pressable, Alert } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  Alert,
+  Dimensions,
+} from "react-native";
 import { Button } from "../ui/Button";
 import FlipCard from "react-native-flip-card";
 import { FontAwesome } from "@expo/vector-icons";
@@ -20,9 +27,7 @@ export function GenerateGame({ Radio1, Radio2, onStartNewGame }) {
   const [flippedIndices, setFlippedIndices] = useState([]); // mảng lưu trữ chỉ số của hai thẻ hiện ĐANG ĐƯỢC LẬT.
   const [matchedPairs, setMatchedPairs] = useState([]); // mảng để lưu trữ các chỉ số của các thẻ đã ghép đôi thành công.
 
-  // hàm để đảo thứ tự, dùng thuật toán Fisher-Yates shuffle (Note:dùng logic khác cũng được miễn thay đổi vị trí)
-  // Input: 1 mảng
-  // Output: 1 mảng đã được hoán đổi vị trí
+
   const shuffleArray = (array) => {
     let shuffledArray = array.slice();
     for (let i = shuffledArray.length - 1; i > 0; i--) {
@@ -37,31 +42,28 @@ export function GenerateGame({ Radio1, Radio2, onStartNewGame }) {
 
   // hàm tạo mảng dựa trên chỉ số chọn của người chơi
   const generateArray = () => {
-    const numsOfItem = Radio2 * Radio1; // nhân vào để lấy số lượng thẻ
+    const numsOfItem = Radio2 * Radio1; 
     let array = []; // mảng rỗng
     let flippedInitial = []; // Mảng để chứa trạng thái ban đầu của các thẻ
     for (let i = 1; i <= numsOfItem / 2; i++) {
-      // làm vòng for để thêm số vào mảng, chia 2 lấy chẵn để lấy số lượng chẵn
-      // Vd: 3 * 3 = 9 . Lấy 8 để chẵn và sẽ có cặp số giống nhau từ 1 đến 4 (bài thầy chơi từ số 1 nên i = 1 đầu tiên)
       array.push(i, i);
       flippedInitial.push(false, false); // Thêm trạng thái "không lật" cho mỗi thẻ vào mảng, Mỗi khi thêm một số vào array, thêm một giá trị false vào flippedInitial.
       setIsFlippedArray(flippedInitial); // Cứ sau mỗi lần thêm cặp số là set trạng thái "không lật"
       setFlippedIndices([]); // set mảng 2 thẻ ĐANG lật rỗng
       setMatchedPairs([]); // set mảng các thẻ đã ghép THÀNH CÔNG rỗng
     }
-    setResultArray(shuffleArray(array)); // sau khi có mảng, thì cho qua hàm đảo thứ tự và set mảng đã đảo để chơi
+    setResultArray(shuffleArray(array)); 
   };
 
-  // thực hiện tạo mảng để chơi
   useEffect(() => {
     generateArray();
-  }, [Radio1, Radio2]); // hàm sẽ dc tạo lại mỗi khi mà có sự thay đổi về số hàng và cột
+  }, [Radio1, Radio2]);
 
   useEffect(() => {
     console.log("Matched pairs updated:", matchedPairs);
     //console.log(matchedPairs===(resultArray-1))
-    console.log("ma",matchedPairs.length)
-    console.log("re",resultArray.length)
+    console.log("ma", matchedPairs.length);
+    console.log("re", resultArray.length);
   }, [matchedPairs]);
 
   // hàm thực hiện reset
@@ -73,7 +75,8 @@ export function GenerateGame({ Radio1, Radio2, onStartNewGame }) {
 
   // hàm xử lí logic trờ chơi
   // Input: chỉ số của thẻ được ấn trong mảng
-  const toggleFlip = (index) => { // LÀM THÊM KO CHO ẤN LẠI THẺ ĐÃ LẬT
+  const toggleFlip = (index) => {
+    // LÀM THÊM KO CHO ẤN LẠI THẺ ĐÃ LẬT
     // kiểm tra ấn đủ 2 thẻ rồi xử lí, ko ấn thẻ thứ 3 và  đảm bảo rằng các thẻ đã khớp không thể được tương tác lại.
     if (flippedIndices.length === 2 || matchedPairs.includes(index)) {
       return;
@@ -91,20 +94,22 @@ export function GenerateGame({ Radio1, Radio2, onStartNewGame }) {
     if (newFlippedIndices.length === 2) {
       //nếu 'newFlippedIndices' chứa chính xác hai chỉ số, điều đó có nghĩa là hai quân bài đã được lật và cần phải kiểm tra xem có trùng khớp hay không.
       const [firstIndex, secondIndex] = newFlippedIndices; // Destructuring
-      if (resultArray[firstIndex] === resultArray[secondIndex]) {
+      if (resultArray[firstIndex] === resultArray[secondIndex] && firstIndex !==secondIndex) {
         setMatchedPairs((prev) => {
           const newMatchedPairs = [...prev, firstIndex, secondIndex];
           if (newMatchedPairs.length === resultArray.length) {
-            Alert.alert(
-              "Win the game",
-              "Chúc mừng con vợ đã làm đúng hết",
-              [{ text: "New game", style: "destructive", onPress: handleReset }, { text: "Go back", style: "destructive", onPress: onStartNewGame }]
-            );
+            Alert.alert("Win the game", "Chúc mừng con vợ đã làm đúng hết", [
+              { text: "New game", style: "destructive", onPress: handleReset },
+              {
+                text: "Go back",
+                style: "destructive",
+                onPress: onStartNewGame,
+              },
+            ]);
           }
           return newMatchedPairs;
         });
-        setFlippedIndices([]); 
-       
+        setFlippedIndices([]);
       } else {
         // nếu Khác
         setTimeout(() => {
@@ -116,14 +121,17 @@ export function GenerateGame({ Radio1, Radio2, onStartNewGame }) {
         }, 1000);
       }
     }
-
-    
   };
+  const screenWidth = Dimensions.get("window").width;
+  const cardWidth = screenWidth / Radio2;
+  const cardHeight = screenWidth / 4;
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Playing Game</Text>
-      <View style={styles.gridContainer}>
+      <View>
+        <Text style={styles.title}>PLAYING GAME</Text>
+      </View>
+      <View>
         {Array.from({ length: Radio1 }).map((_, rowIndex) => (
           <View key={rowIndex} style={styles.row}>
             {resultArray
@@ -132,7 +140,10 @@ export function GenerateGame({ Radio1, Radio2, onStartNewGame }) {
                 <Pressable
                   onPress={() => toggleFlip(rowIndex * Radio2 + index)} //chỉ số tuyệt đối của ô hiện tại trong mảng.
                   key={index}
-                  style={styles.cell}
+                  style={[
+                    styles.cell,
+                    { width: cardWidth, height: cardHeight },
+                  ]}
                 >
                   <FlipCard
                     style={styles.card}
@@ -164,68 +175,59 @@ export function GenerateGame({ Radio1, Radio2, onStartNewGame }) {
           </View>
         ))}
       </View>
-      <Button onPress={handleReset}>Reset</Button>
-      <Button onPress={onStartNewGame}>Back to Home</Button>
+      <View>
+        <Button onPress={handleReset}>Reset</Button>
+      </View>
+      <View>
+        <Button onPress={onStartNewGame}>Back to Home</Button>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 16,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   box: {
+    flex:1,
     justifyContent: "center",
     alignItems: "center",
-    height: 40,
-    width: 40,
+    height: 50,
+    width: 50,
     borderWidth: 3,
     borderColor: colors.primary600,
     borderRadius: 3,
     backgroundColor: colors.primary700,
   },
-  container: {
-    flex: 1,
-    padding: 16,
-    backgroundColor: "#2c3e50",
-    alignItems: "center",
+  row: {
+    flexDirection: "row",
+    
+    marginVertical: 5,
   },
+  cell: {
+    backgroundColor: colors.primary700,
+    borderRadius: 9,
+    margin: 5,
+  },
+  card: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: 'center', // Center the content inside the card
+    borderRadius: 4,
+    
+  },
+
   title: {
     fontSize: 24,
     color: "#ecf0f1",
     marginBottom: 16,
   },
-  // gridContainer: {
-  //   //flexDirection: "column",
-  //   alignItems: "center",
-
-  // },
-  row: {
-    flexDirection: "row",
-  },
-  cell: {
-    // width: 70,
-    // height: 70,
-    width: 70,
-    height: 70,
-    backgroundColor: "#1abc9c",
-    margin: 4,
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 4,
-    //   elevation: 4, // Add elevation for shadow (Android)
-    //   shadowColor: "#000",
-    //   shadowOffset: { width: 0, height: 2 },
-    //   shadowOpacity: 0.3,
-    //   shadowRadius: 2,
-  },
   cellText: {
     color: "#ecf0f1",
     fontSize: 18,
-  },
-  card: {
-    width: "100%",
-    height: "100%",
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 4,
-    marginTop: "25%",
   },
 });

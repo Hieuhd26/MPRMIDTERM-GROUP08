@@ -1,16 +1,11 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 import { SafeAreaView, StyleSheet, View, Text, Pressable } from "react-native";
 import { colors } from "../../constants/Color";
 import { Button } from "./Button";
-import {Ionicons} from '@expo/vector-icons';
-import { FontAwesome } from '@expo/vector-icons';
-import { FontAwesome6 } from '@expo/vector-icons';
 
 export function Radio({ confirmRadio1, confirmRadio2 }) {
   const [selectedRadio1, setSelectedRadio1] = useState(null);
   const [selectedRadio2, setSelectedRadio2] = useState(null);
-  const [resultArray, setResultArray] = useState([]);
 
   const options1 = [2, 3, 4, 5, 6, 7];
   const options2 = [2, 3, 4];
@@ -22,46 +17,59 @@ export function Radio({ confirmRadio1, confirmRadio2 }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.container}>
-        {options1.map((option, index) => (
-          <Pressable
-            key={index}
-            onPress={() => {
-              setSelectedRadio1(option);
-             // console.log(option)
-            }}
-          >
-            <View style={styles.wrapper}>
-              <View style={styles.radio}>
-                {selectedRadio1 === option ? (
-                  <View style={styles.radioDot}></View>
-                ) : null}
-              </View>
-              <Text style={styles.text}>{option}</Text>
-            </View>
-          </Pressable>
-        ))}
-
-        {options2.map((option, index) => (
-          <Pressable
-            key={index}
-            onPress={() => {
-              setSelectedRadio2(option);
-              //console.log(option)
-            }}
-          >
-            <View style={styles.wrapper}>
-              <View style={styles.radio}>
-                {selectedRadio2 === option ? (
-                  <View style={styles.radioDot}></View>
-                ) : null}
-              </View>
-              <Text style={styles.text}>{option}</Text>
-            </View>
-          </Pressable>
-        ))}
-        <Button onPress={confirmRadio}>Play Game</Button>
+      <View style={styles.header}>
+        <Text style={styles.title}>CARDS FLIP GAME</Text>
+        <Text style={styles.instructionsTitle}>INSTRUCTIONS</Text>
+        <Text style={styles.instructions}>
+          Click the green cards to see what number they uncover and try to find
+          the matching number underneath the other cards. Uncover two matching
+          numbers in a row to eliminate them from the game. Eliminate all cards
+          as fast as you can to win the game. Have fun FLIPing!
+        </Text>
+        <Text style={styles.instructionsTitle}>SELECT BOARD SIZE</Text>
       </View>
+
+      <View style={styles.optionContainer}>
+        <View style={styles.optionGroup}>
+          <Text style={styles.optionTitle}>ROWS NUMBER:</Text>
+          {options1.map((option, index) => (
+            <Pressable
+              key={index}
+              onPress={() => setSelectedRadio1(option)}
+            >
+              <View style={styles.wrapper}>
+                <View style={styles.radio}>
+                  {selectedRadio1 === option ? (
+                    <View style={styles.radioDot}></View>
+                  ) : null}
+                </View>
+                <Text style={styles.text}>{option}</Text>
+              </View>
+            </Pressable>
+          ))}
+        </View>
+
+        <View style={styles.optionGroup}>
+          <Text style={styles.optionTitle}>COLUMNS NUMBER:</Text>
+          {options2.map((option, index) => (
+            <Pressable
+              key={index}
+              onPress={() => setSelectedRadio2(option)}
+            >
+              <View style={styles.wrapper}>
+                <View style={styles.radio}>
+                  {selectedRadio2 === option ? (
+                    <View style={styles.radioDot}></View>
+                  ) : null}
+                </View>
+                <Text style={styles.text}>{option}</Text>
+              </View>
+            </Pressable>
+          ))}
+        </View>
+      </View>
+
+      <Button onPress={confirmRadio}>Play Game</Button>
     </SafeAreaView>
   );
 }
@@ -72,6 +80,41 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary500,
     alignItems: "center",
     justifyContent: "center",
+    padding: 16,
+  },
+  header: {
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  title: {
+    fontSize: 24,
+    color: "white",
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  instructionsTitle: {
+    fontSize: 18,
+    color: "white",
+    marginBottom: 5,
+  },
+  instructions: {
+    fontSize: 14,
+    color: "white",
+    textAlign: "center",
+    marginBottom: 20,
+  },
+  optionContainer: {
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "space-around",
+  },
+  optionGroup: {
+    alignItems: "center",
+  },
+  optionTitle: {
+    fontSize: 16,
+    color: "white",
+    marginBottom: 10,
   },
   radio: {
     width: 40,
