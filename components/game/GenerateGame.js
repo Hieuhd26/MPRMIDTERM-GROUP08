@@ -18,14 +18,12 @@ import { colors } from "../../constants/Color";
 // |  GROUP 08: HIỆU - HIỀN ANH - HUYỀN ANH |
 // ------------------------------------------
 
-// Radio1: số hàng
-// Radio2 : số cột
-// "Không lật": mặt sô ở dưới, mặt icon ở trên
+
 export function GenerateGame({ Radio1, Radio2, onStartNewGame }) {
-  const [resultArray, setResultArray] = useState([]); // mảng các số để chơi
-  const [isFlippedArray, setIsFlippedArray] = useState([]); // mảng trạng thái lật của TẤT CẢ các thẻ
-  const [flippedIndices, setFlippedIndices] = useState([]); // mảng lưu trữ chỉ số của hai thẻ hiện ĐANG ĐƯỢC LẬT.
-  const [matchedPairs, setMatchedPairs] = useState([]); // mảng để lưu trữ các chỉ số của các thẻ đã ghép đôi thành công.
+  const [resultArray, setResultArray] = useState([]); 
+  const [isFlippedArray, setIsFlippedArray] = useState([]);
+  const [flippedIndices, setFlippedIndices] = useState([]); 
+  const [matchedPairs, setMatchedPairs] = useState([]);
 
 
   const shuffleArray = (array) => {
@@ -40,17 +38,17 @@ export function GenerateGame({ Radio1, Radio2, onStartNewGame }) {
     return shuffledArray;
   };
 
-  // hàm tạo mảng dựa trên chỉ số chọn của người chơi
+  
   const generateArray = () => {
     const numsOfItem = Radio2 * Radio1; 
-    let array = []; // mảng rỗng
-    let flippedInitial = []; // Mảng để chứa trạng thái ban đầu của các thẻ
+    let array = []; 
+    let flippedInitial = []; 
     for (let i = 1; i <= numsOfItem / 2; i++) {
       array.push(i, i);
-      flippedInitial.push(false, false); // Thêm trạng thái "không lật" cho mỗi thẻ vào mảng, Mỗi khi thêm một số vào array, thêm một giá trị false vào flippedInitial.
-      setIsFlippedArray(flippedInitial); // Cứ sau mỗi lần thêm cặp số là set trạng thái "không lật"
-      setFlippedIndices([]); // set mảng 2 thẻ ĐANG lật rỗng
-      setMatchedPairs([]); // set mảng các thẻ đã ghép THÀNH CÔNG rỗng
+      flippedInitial.push(false, false);
+      setIsFlippedArray(flippedInitial);
+      setFlippedIndices([]);
+      setMatchedPairs([]);
     }
     setResultArray(shuffleArray(array)); 
   };
@@ -68,32 +66,30 @@ export function GenerateGame({ Radio1, Radio2, onStartNewGame }) {
 
   // hàm thực hiện reset
   const handleReset = () => {
-    generateArray(); // reset thì sẽ tạo mảng mới
-    const flippedInitial = Array(resultArray.length).fill(false); // Tạo mảng dựa trên độ dài của `resultArray`, tất cả giá trị là false
-    setIsFlippedArray(flippedInitial); // đặt trạng thái lật là "không lật". Khi chơi mà đang dở có vài thẻ ĐÃ lật , ấn "RESET" nó sẽ lật ngược lại (về trạng thái không lật)
+    generateArray(); 
+    const flippedInitial = Array(resultArray.length).fill(false); 
+    setIsFlippedArray(flippedInitial); 
   };
 
-  // hàm xử lí logic trờ chơi
-  // Input: chỉ số của thẻ được ấn trong mảng
+ 
   const toggleFlip = (index) => {
-    // LÀM THÊM KO CHO ẤN LẠI THẺ ĐÃ LẬT
-    // kiểm tra ấn đủ 2 thẻ rồi xử lí, ko ấn thẻ thứ 3 và  đảm bảo rằng các thẻ đã khớp không thể được tương tác lại.
+ 
     if (flippedIndices.length === 2 || matchedPairs.includes(index)) {
       return;
     }
-    // lật thẻ
-    const newFlippedArray = [...isFlippedArray]; // một mảng 'newflippedarray' mới được tạo dưới dạng bản sao của mảng isflippedarray(trạng thái lật của TẤT CẢ các thẻ) hiện tại.
-    newFlippedArray[index] = !newFlippedArray[index]; // trạng thái của thẻ ở chỉ mục đã chỉ định được đảo lại (tức là lật) (lật ở mảng mới)
-    setIsFlippedArray(newFlippedArray); // đặt lại trạng thái lật của TẤT CẢ các thẻ (ỏ đây mảng đã có những thay đổi từ dự kiện ở trên)
+   
+    const newFlippedArray = [...isFlippedArray]; 
+    newFlippedArray[index] = !newFlippedArray[index]; 
+    setIsFlippedArray(newFlippedArray); 
 
     //
-    const newFlippedIndices = [...flippedIndices, index]; // mảng 'newflippedindices' được tạo bằng cách sao chép các chỉ số 'flippedindices'  (hai thẻ hiện ĐANG ĐƯỢC LẬT)
-    // hiện tại và thêm chỉ mục hiện tại vào nó.
-    setFlippedIndices(newFlippedIndices); // trạng thái mảng 2 thẻ ghép đúng được cập nhật với mảng mới này.
+    const newFlippedIndices = [...flippedIndices, index]; 
+  
+    setFlippedIndices(newFlippedIndices);
 
     if (newFlippedIndices.length === 2) {
-      //nếu 'newFlippedIndices' chứa chính xác hai chỉ số, điều đó có nghĩa là hai quân bài đã được lật và cần phải kiểm tra xem có trùng khớp hay không.
-      const [firstIndex, secondIndex] = newFlippedIndices; // Destructuring
+    
+      const [firstIndex, secondIndex] = newFlippedIndices; 
       if (resultArray[firstIndex] === resultArray[secondIndex] && firstIndex !==secondIndex) {
         setMatchedPairs((prev) => {
           const newMatchedPairs = [...prev, firstIndex, secondIndex];
@@ -113,11 +109,11 @@ export function GenerateGame({ Radio1, Radio2, onStartNewGame }) {
       } else {
         // nếu Khác
         setTimeout(() => {
-          const resetFlippedArray = [...newFlippedArray]; // mảng mới tạo dựa trên mảng trạng thái lật của tất cả các thẻ
-          resetFlippedArray[firstIndex] = false; // đặt lại thẻ tại chỉ mục đó thành không lật ,
+          const resetFlippedArray = [...newFlippedArray]; 
+          resetFlippedArray[firstIndex] = false; 
           resetFlippedArray[secondIndex] = false;
-          setIsFlippedArray(resetFlippedArray); // đặt lại  mảng trạng thái lật của TẤT CẢ các thẻ,  các chỉ mục nào lật đúng thì vẫn là đúng, thẻ nào lật ko giống thì lại về false
-          setFlippedIndices([]); //set mảng lưu trữ chỉ số hai thẻ đang được lật về rỗng cho lần check tiếp theo
+          setIsFlippedArray(resetFlippedArray); 
+          setFlippedIndices([]);
         }, 1000);
       }
     }
