@@ -19,12 +19,16 @@ export function Radio({ confirmRadio1, confirmRadio2 }) {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>CARDS FLIP GAME</Text>
+
         <Text style={styles.instructionsTitle}>INSTRUCTIONS</Text>
         <Text style={styles.instructions}>
           Click the green cards to see what number they uncover and try to find
-          the matching number underneath the other cards. Uncover two matching
-          numbers in a row to eliminate them from the game. Eliminate all cards
-          as fast as you can to win the game. Have fun FLIPing!
+          the matching number underneath the other cards.
+          {"\n\n"}
+          Uncover two matching numbers in a row to eliminate them from the game.
+          {"\n\n"}
+          Eliminate all cards as fast as you can to win the game. Have fun
+          FLIPing!
         </Text>
         <Text style={styles.instructionsTitle}>SELECT BOARD SIZE</Text>
       </View>
@@ -33,10 +37,7 @@ export function Radio({ confirmRadio1, confirmRadio2 }) {
         <View style={styles.optionGroup}>
           <Text style={styles.optionTitle}>ROWS NUMBER:</Text>
           {options1.map((option, index) => (
-            <Pressable
-              key={index}
-              onPress={() => setSelectedRadio1(option)}
-            >
+            <Pressable key={index} onPress={() => setSelectedRadio1(option)}>
               <View style={styles.wrapper}>
                 <View style={styles.radio}>
                   {selectedRadio1 === option ? (
@@ -48,14 +49,10 @@ export function Radio({ confirmRadio1, confirmRadio2 }) {
             </Pressable>
           ))}
         </View>
-
         <View style={styles.optionGroup}>
           <Text style={styles.optionTitle}>COLUMNS NUMBER:</Text>
           {options2.map((option, index) => (
-            <Pressable
-              key={index}
-              onPress={() => setSelectedRadio2(option)}
-            >
+            <Pressable key={index} onPress={() => setSelectedRadio2(option)}>
               <View style={styles.wrapper}>
                 <View style={styles.radio}>
                   {selectedRadio2 === option ? (
@@ -68,7 +65,6 @@ export function Radio({ confirmRadio1, confirmRadio2 }) {
           ))}
         </View>
       </View>
-
       <Button onPress={confirmRadio}>Play Game</Button>
     </SafeAreaView>
   );
@@ -94,14 +90,16 @@ const styles = StyleSheet.create({
   },
   instructionsTitle: {
     fontSize: 18,
-    color: "white",
+    color: colors.primary600,
     marginBottom: 5,
+    textAlign: "left",
   },
   instructions: {
     fontSize: 14,
     color: "white",
     textAlign: "center",
     marginBottom: 20,
+    textAlign: "left",
   },
   optionContainer: {
     width: "100%",
@@ -117,10 +115,10 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   radio: {
-    width: 40,
-    height: 40,
+    width: 30,
+    height: 30,
     borderWidth: 3,
-    borderRadius: 20,
+    borderRadius: 15,
     borderColor: colors.primary600,
     margin: 10,
     alignItems: "center",
@@ -132,9 +130,9 @@ const styles = StyleSheet.create({
   },
   radioDot: {
     backgroundColor: colors.primary600,
-    height: 28,
-    width: 28,
-    borderRadius: 14,
+    height: 20,
+    width: 20,
+    borderRadius: 10,
   },
   text: {
     color: "white",
