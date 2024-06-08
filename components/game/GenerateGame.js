@@ -18,33 +18,32 @@ import { colors } from "../../constants/Color";
 // ------------------------------------------
 
 export function GenerateGame({ Radio1, Radio2, onStartNewGame }) {
-  const [resultArray, setResultArray] = useState([]);
-  const [isFlippedArray, setIsFlippedArray] = useState([]);
-  const [flippedIndices, setFlippedIndices] = useState([]);
-  const [matchedPairs, setMatchedPairs] = useState([]);
+  const [resultArray, setResultArray] = useState([]);         // mảng các số để chơi
+  const [isFlippedArray, setIsFlippedArray] = useState([]);   // mảng trạng thái lật của TẤT CẢ các thẻ
+  const [flippedIndices, setFlippedIndices] = useState([]);   // mảng lưu trữ chỉ số của hai thẻ hiện ĐANG ĐƯỢC LẬT.
+  const [matchedPairs, setMatchedPairs] = useState([]);       // mảng để lưu trữ các chỉ số của các thẻ đã ghép đôi thành công.
 
+
+  // trộn mảng
   const shuffleArray = (array) => {
-    let shuffledArray = array.slice();
-    for (let i = shuffledArray.length - 1; i > 0; i--) {
+    for (let i = array.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      [shuffledArray[i], shuffledArray[j]] = [
-        shuffledArray[j],
-        shuffledArray[i],
-      ];
+      [array[i], array[j]] = [array[j], array[i]];
     }
-    return shuffledArray;
+    return array;
   };
 
+  // tạo mảng
   const generateArray = () => {
     const numsOfItem = Radio2 * Radio1;
     let array = [];
     let flippedInitial = [];
     for (let i = 1; i <= numsOfItem / 2; i++) {
-      array.push(i, i);
-      flippedInitial.push(false, false);
-      setIsFlippedArray(flippedInitial);
-      setFlippedIndices([]);
-      setMatchedPairs([]);
+      array.push(i, i);                            // thêm số
+      flippedInitial.push(false, false);          
+      setIsFlippedArray(flippedInitial);           // thêm trạng thái ko lật
+      setFlippedIndices([]);                      // mảng 2 thẻ ĐANG lật rỗng
+      setMatchedPairs([]);                        // mảng các thẻ đã ghép THÀNH CÔNG rỗng
     }
     setResultArray(shuffleArray(array));
   };
@@ -53,11 +52,11 @@ export function GenerateGame({ Radio1, Radio2, onStartNewGame }) {
     generateArray();
   }, [Radio1, Radio2]);
 
-  useEffect(() => {
-    console.log("Matched pairs updated:", matchedPairs);
-    console.log("ma", matchedPairs.length);
-    console.log("re", resultArray.length);
-  }, [matchedPairs]);
+  // useEffect(() => {
+  //   console.log("Matched pairs updated:", matchedPairs);
+  //   console.log("ma", matchedPairs.length);
+  //   console.log("re", resultArray.length);
+  // }, [matchedPairs]);
 
   const handleReset = () => {
     generateArray();
@@ -66,26 +65,26 @@ export function GenerateGame({ Radio1, Radio2, onStartNewGame }) {
   };
 
   const toggleFlip = (index) => {
-    if (flippedIndices.length === 2 || matchedPairs.includes(index)) {
+    if (flippedIndices.length === 2 || matchedPairs.includes(index)) {  // mảng chứa 2 thẻ đang lật mà đủ thì ko ấn dc thẻ 3 hoặc 2 thẻ đã ghép thành công cũng ko ấn lại dc
       return;
     }
 
-    const newFlippedArray = [...isFlippedArray];
-    newFlippedArray[index] = !newFlippedArray[index];
-    setIsFlippedArray(newFlippedArray);
+    const newFlippedArray = [...isFlippedArray];      // tạo bản sao mảng trạng thái lật tất cả các thẻ 
+    newFlippedArray[index] = !newFlippedArray[index];  // đảo ngược trạng thái thẻ ở mảng mới
+    setIsFlippedArray(newFlippedArray);                 // trạng thái lật các thẻ
 
-    const newFlippedIndices = [...flippedIndices, index];
+    const newFlippedIndices = [...flippedIndices, index];  // tạo bản sao mảng 2 thẻ đang dc lật
     setFlippedIndices(newFlippedIndices);
 
-    if (newFlippedIndices.length === 2) {
+    if (newFlippedIndices.length === 2) {                    // có đủ 2 thẻ trong mảng để so sánh
       const [firstIndex, secondIndex] = newFlippedIndices;
       if (
-        resultArray[firstIndex] === resultArray[secondIndex] &&
-        firstIndex !== secondIndex
+        resultArray[firstIndex] === resultArray[secondIndex] &&          
+        firstIndex !== secondIndex                                      // nếu có số giống nhau và khác index : <tránh ấn 1 thẻ 2 lần >
       ) {
-        setMatchedPairs((prev) => {
+        setMatchedPairs((prev) => {                                       // lưu vào mảng ghép thành công
           const newMatchedPairs = [...prev, firstIndex, secondIndex];
-          if (newMatchedPairs.length === resultArray.length) {
+          if (newMatchedPairs.length === resultArray.length) {            
             Alert.alert(
               "Win the game",
               "Congratulation! You won this game. Press a button to start a new game or go back to the screen",
@@ -105,9 +104,9 @@ export function GenerateGame({ Radio1, Radio2, onStartNewGame }) {
           }
           return newMatchedPairs;
         });
-        setFlippedIndices([]);
+        setFlippedIndices([]);            // mảng chứa 2 thẻ đang lật về rỗng cho lần sau
       } else {
-        setTimeout(() => {
+        setTimeout(() => {              // lật lại nếu ko đúng
           const resetFlippedArray = [...newFlippedArray];
           resetFlippedArray[firstIndex] = false;
           resetFlippedArray[secondIndex] = false;
@@ -117,7 +116,7 @@ export function GenerateGame({ Radio1, Radio2, onStartNewGame }) {
       }
     }
   };
-
+    // tạo thẻ, 
   const screenWidth = Dimensions.get("window").width;
   const screenHeight = Dimensions.get("window").height;
 
@@ -147,13 +146,13 @@ export function GenerateGame({ Radio1, Radio2, onStartNewGame }) {
         </View>
 
         <View>
-          {Array.from({ length: Radio1 }).map((option, rowIndex) => (
+          {Array.from({ length: Radio1 }).map((option, rowIndex) => (         //tạo mảng có chiều dài bằng sl hàng <hàng đại diện>, tạo từng hàng
             <View key={rowIndex} style={styles.row}>
               {resultArray
-                .slice(rowIndex * Radio2, (rowIndex + 1) * Radio2)
+                .slice(rowIndex * Radio2, (rowIndex + 1) * Radio2)           // cắt dựa trên index đại diện hàng và sl cột 
                 .map((item, index) => (
                   <Pressable
-                    onPress={() => toggleFlip(rowIndex * Radio2 + index)}
+                    onPress={() => toggleFlip(rowIndex * Radio2 + index)}   // chỉ số của thẻ trong mảng ban đầu khi dc tạo (resultArray)
                     key={index}
                     style={[
                       styles.cell,
@@ -184,7 +183,6 @@ export function GenerateGame({ Radio1, Radio2, onStartNewGame }) {
 
                       {/* Back */}
                       <View style={styles.box}>
-                        {/* Render different content based on flipped and matched status */}
                         {isFlippedArray[rowIndex * Radio2 + index] &&
                         matchedPairs.includes(rowIndex * Radio2 + index) ? (
                           <View style={styles.iconContainer}>
@@ -249,7 +247,7 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   row: {
-    flexDirection: "row",
+    flexDirection: "row",  // xếp thẻ theo chiều ngang
     alignItems: "center",
   },
   cell: {

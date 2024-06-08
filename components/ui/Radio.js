@@ -95,11 +95,11 @@ const styles = StyleSheet.create({
     textAlign: "left",
   },
   instructions: {
-    fontSize: 14,
+    fontSize: 16,
     color: "white",
-    textAlign: "center",
-    marginBottom: 20,
     textAlign: "left",
+    marginBottom: 20,
+   margin:10,
   },
   optionContainer: {
     width: "100%",

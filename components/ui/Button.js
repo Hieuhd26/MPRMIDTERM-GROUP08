@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
   buttonOuterContainer: {
     backgroundColor: colors.primary800,
     borderRadius: 8,
-    margin: 4,
+    margin: 10,
     overflow: "hidden",
   },
   buttonText: {
